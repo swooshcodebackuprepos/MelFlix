@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload - Melflix Admin</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Melflix Admin</h1>
+    <h2>Upload New Content</h2>
+  </header>
+
+  <main>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label for="video">Choose a video:</label>
+      <input type="file" name="video" required />
+
+      <label for="password">Admin Password:</label>
+      <input type="password" name="password" required />
+
+      <button type="submit">Upload</button>
+    </form>
+  </main>
+</body>
+</html>

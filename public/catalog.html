@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Melflix - Finally Mel Presents</title>
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <style>
+    body {
+      animation: fadeIn 1s ease-in-out;
+    }
+    .video-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .video-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px gold;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body style="background-image: url('/css/barbershop-bg.jpg'); background-size: cover; background-repeat: no-repeat;">
+
+  <header class="melflix-header">
+    <img src="css/mel-logo.png" alt="Finally Mel Logo" class="mel-logo" />
+    <h1>Melflix</h1>
+    <h2>Finally Mel Presents...</h2>
+    <img src="css/qr-book.png" alt="QR Code" class="qr-code" style="height: auto; max-width: 25%;" title="Scan for Mel's Book"/>
+  </header>
+
+  <main>
+    <section class="intro-section">
+      <p>"You don’t just get a cut… you get cut into the community."</p>
+    </section>
+
+    <section class="video-section">
+      <h3>🎬 Mel's Picks</h3>
+      <div id="video-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>If you look like hell... come see Mel. 💈</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+
+  <audio autoplay loop muted id="bg-audio">
+    <source src="audio/barbershop.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</body>
+</html>

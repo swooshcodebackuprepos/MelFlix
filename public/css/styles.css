@@ -1,0 +1,75 @@
+
+body {
+  font-family: 'Arial Black', sans-serif;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+}
+header.melflix-header {
+  background: #000;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+header h1 {
+  font-size: 4em;
+  color: red;
+  margin: 0;
+}
+header h2 {
+  font-size: 1.8em;
+  color: gold;
+  margin-top: 5px;
+  font-style: italic;
+}
+.mel-logo {
+  height: 80px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+.qr-code {
+  height: 80px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+main {
+  padding: 30px;
+}
+.intro-section {
+  background: rgba(0,0,0,0.7);
+  padding: 10px 20px;
+  border-left: 5px solid red;
+  margin-bottom: 30px;
+}
+.video-section h3 {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #00ffcc;
+}
+#video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.video-card {
+  background: #222;
+  border: 2px solid #333;
+  padding: 10px;
+  border-radius: 6px;
+}
+.video-card h3 {
+  color: #fff;
+}
+.video-card video {
+  width: 100%;
+  border-radius: 6px;
+}
+footer {
+  background-color: #000;
+  color: #aaa;
+  text-align: center;
+  padding: 10px;
+}
