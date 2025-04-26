@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Join Melflix</title>
+  <link rel="stylesheet" href="catalog.css" />
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=sb"></script>
+</head>
+<body style="text-align: center; background: #000; color: white;">
+  <h1 class="title">Unlock Melflix</h1>
+  <p class="subtitle">Access all the real cuts, real stories</p>
+
+  <button id="stripeCheckout" style="padding: 15px 30px; font-size: 1rem; background-color: red; color: white; border: none; border-radius: 5px;">Pay $28 with Stripe</button>
+  <div id="paypal-button-container" style="margin-top: 30px;"></div>
+
+  <script>
+    document.getElementById('stripeCheckout').onclick = function() {
+      localStorage.setItem('paid', 'true');
+      window.location.href = '/catalog.html';
+    };
+
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{ amount: { value: '28.00' } }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          localStorage.setItem('paid', 'true');
+          window.location.href = '/catalog.html';
+        });
+      }
+    }).render('#paypal-button-container');
+  </script>
+</body>
+</html>

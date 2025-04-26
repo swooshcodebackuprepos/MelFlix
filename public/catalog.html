@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Melflix Catalog</title>
+  <link rel="stylesheet" href="catalog.css" />
+  <script defer src="main.js"></script>
+</head>
+<body style="background: url('/images/background-final.png') no-repeat center center fixed; background-size: cover; color: white;" onload="checkPayment()">
+  <header>
+    <h1 class="title">🔥 Melflix</h1>
+    <p class="subtitle">Finally Mel Presents...</p>
+  </header>
+  <audio autoplay loop hidden>
+    <source src="/audio/MDS Finally Mels rnwd2(1).mp3" type="audio/mp3">
+  </audio>
+  <section id="video-grid" class="grid-container"></section>
+  <script>
+    function checkPayment() {
+      if (!localStorage.getItem('paid')) {
+        window.location.href = '/signup.html';
+      }
+    }
+  </script>
+</body>
+</html>

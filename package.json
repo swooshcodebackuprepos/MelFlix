@@ -1,0 +1,14 @@
+{
+  "name": "melflix",
+  "version": "1.0.0",
+  "description": "Melflix Streaming App - Finally Mel Presents",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

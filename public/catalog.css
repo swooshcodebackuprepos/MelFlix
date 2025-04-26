@@ -1,0 +1,7 @@
+body { margin: 0; background-color: #000; font-family: 'Poppins', sans-serif; }
+header { text-align: center; padding: 20px; background-color: #111; }
+.title { margin: 0; color: red; font-size: 2rem; }
+.subtitle { margin: 0; color: #ccc; }
+.grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; padding: 2rem; }
+.video-card { background-color: rgba(17, 17, 17, 0.9); padding: 1rem; border-radius: 10px; text-align: center; box-shadow: 0 0 10px red; }
+.video-card video { width: 100%; border-radius: 10px; }
