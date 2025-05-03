@@ -1,7 +1,11 @@
 [
   {
-    "filename": "mel.mp4",
-    "title": "Finally Mel Presents: Volume 1",
-    "description": "Barbershop Stories & Real Cuts"
+    "category": "Available Videos",
+    "videos": [
+      { "filename": "login-bg.mp4" },
+      { "filename": "videoplayback.mp4" },
+      { "filename": "videoplayback1.mp4" }
+    ]
   }
 ]
+

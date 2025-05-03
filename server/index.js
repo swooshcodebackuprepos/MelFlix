@@ -38,29 +38,3 @@ app.post('/upload', upload.single('video'), (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Melflix running on http://localhost:${PORT}`);
 });
-
-// NEW: util to build the list on the fly
-const buildCatalog = () => {
-  const files = fs.readdirSync(path.join(__dirname, 'uploads'));
-  // group by simple rule: filenames starting with "videoplayback" -> Street Classics, everything else -> Misc
-  const catalog = {
-    "Street Classics": [],
-    "Misc": []
-  };
-
-  files.filter(f => f.endsWith('.mp4')).forEach(f => {
-    if (f.startsWith('videoplayback')) {
-      catalog["Street Classics"].push({ filename: f });
-    } else {
-      catalog["Misc"].push({ filename: f });
-    }
-  });
-  // turn hash → array expected by frontend
-  return Object.entries(catalog).map(([category, videos]) => ({ category, videos }));
-};
-
-// existing static & uploads middleware ...
-app.get('/videos', (req, res) => {
-  res.json(buildCatalog());        // ⬅️ always fresh
-});
-
