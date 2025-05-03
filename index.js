@@ -64,3 +64,9 @@ app.get('/videos', (req, res) => {
   res.json(buildCatalog());        // ⬅️ always fresh
 });
 
+// Serve the main landing page (or catalog) at “/”
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index_landing.html'));
+  // or  res.redirect('/login.html');
+});
+
