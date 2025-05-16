@@ -1,72 +1,117 @@
+// index.js – updated for Render deploy
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { exec } = require('child_process');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ────────────────────────────────────────────────────────────
+// Ensure required directories exist
+// ────────────────────────────────────────────────────────────
 const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+const thumbsDir = path.join(__dirname, 'public', 'thumbnails');
+[uploadsDir, thumbsDir].forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
 
+// ────────────────────────────────────────────────────────────
+// Middleware
+// ────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/thumbnails', express.static(path.join(__dirname, 'public/thumbnails')));
+app.use('/uploads', express.static(uploadsDir));
+app.use('/thumbnails', express.static(thumbsDir));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/videos', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'videos.json'));
+// ────────────────────────────────────────────────────────────
+// Multer storage (stream video straight to disk)
+// ────────────────────────────────────────────────────────────
+const storage = multer.diskStorage({
+  destination: uploadsDir,
+  filename: (_, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${crypto.randomUUID()}${ext}`);
+  }
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: (_, file, cb) => cb(null, file.mimetype.startsWith('video/'))
+});
+
+// ────────────────────────────────────────────────────────────
+// POST /upload – receive video + generate thumbnail
+// ────────────────────────────────────────────────────────────
 app.post('/upload', upload.single('video'), (req, res) => {
-  if (!req.file) return res.status(400).send("No file uploaded.");
+  if (!req.file) return res.status(400).send('No file uploaded.');
 
-  const savePath = path.join(__dirname, 'uploads', req.file.originalname);
-  fs.writeFileSync(savePath, req.file.buffer);
+  const savePath = path.join(uploadsDir, req.file.filename);
+  const thumbPath = path.join(
+    thumbsDir,
+    `${path.parse(req.file.filename).name}.jpg`
+  );
 
-  const thumbPath = path.join(__dirname, 'public', 'thumbnails', req.file.originalname.replace('.mp4', '.jpg'));
-  const command = `ffmpeg -ss 00:00:01 -i "${savePath}" -frames:v 1 -q:v 2 "${thumbPath}"`;
-
-  exec(command, (err) => {
-    if (err) console.error("Thumbnail generation failed:", err);
-    res.redirect('/catalog.html');
+  // Generate thumbnail (first frame at 1 s)
+  const ffmpegCmd = `ffmpeg -y -ss 00:00:01 -i "${savePath}" -frames:v 1 -q:v 2 "${thumbPath}"`;
+  exec(ffmpegCmd, err => {
+    if (err) console.error('Thumbnail generation failed:', err);
   });
+
+  res.redirect('/catalog.html');
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Melflix running on http://localhost:${PORT}`);
-});
+// ────────────────────────────────────────────────────────────
+// Helper to build catalog JSON on the fly
+// ────────────────────────────────────────────────────────────
+const buildCatalog = async () => {
+  const files = (await fs.promises.readdir(uploadsDir)).filter(f =>
+    f.toLowerCase().endsWith('.mp4')
+  );
 
-// NEW: util to build the list on the fly
-const buildCatalog = () => {
-  const files = fs.readdirSync(path.join(__dirname, 'uploads'));
-  // group by simple rule: filenames starting with "videoplayback" -> Street Classics, everything else -> Misc
   const catalog = {
-    "Street Classics": [],
-    "Misc": []
+    'Street Classics': [],
+    Misc: []
   };
 
-  files.filter(f => f.endsWith('.mp4')).forEach(f => {
+  files.forEach(f => {
+    const entry = { filename: f };
     if (f.startsWith('videoplayback')) {
-      catalog["Street Classics"].push({ filename: f });
+      catalog['Street Classics'].push(entry);
     } else {
-      catalog["Misc"].push({ filename: f });
+      catalog.Misc.push(entry);
     }
   });
-  // turn hash → array expected by frontend
-  return Object.entries(catalog).map(([category, videos]) => ({ category, videos }));
+
+  return Object.entries(catalog).map(([category, videos]) => ({
+    category,
+    videos
+  }));
 };
 
-// existing static & uploads middleware ...
-app.get('/videos', (req, res) => {
-  res.json(buildCatalog());        // ⬅️ always fresh
+// GET /videos – dynamic catalog
+app.get('/videos', async (_, res) => {
+  try {
+    res.json(await buildCatalog());
+  } catch (e) {
+    console.error('Catalog build error:', e);
+    res.status(500).send('Server error');
+  }
 });
 
-// Serve the main landing page (or catalog) at “/”
-app.get('/', (req, res) => {
+// Health check for Render
+app.get('/health', (_, res) => res.sendStatus(200));
+
+// Landing page
+app.get('/', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index_landing.html'));
-  // or  res.redirect('/login.html');
 });
 
+// ────────────────────────────────────────────────────────────
+// Start server
+// ────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`🚀 Melflix running on :${PORT}`);
+});
